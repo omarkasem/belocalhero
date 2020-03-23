@@ -208,14 +208,11 @@ abstract class OutdoorfMain{
         return $id;
     }
 
+
     public function uploadImage($base64_img,$image_name){
-        $imgdata = base64_decode($base64_img);
-        $f = finfo_open();
-        $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
-        
-        $mime = explode('/',$mime_type);
-        $mime_ext = $mime[1];
- 
+        $mime_ext = end(explode('/', (explode(';', $base64_img))[0]));
+        $mime_type = 'image/'.$mime_ext;
+
         // Upload dir.
         $upload_dir  = wp_upload_dir();
         $upload_path = str_replace( '/', DIRECTORY_SEPARATOR, $upload_dir['path'] ) . DIRECTORY_SEPARATOR;
@@ -241,6 +238,7 @@ abstract class OutdoorfMain{
         $attach_id = wp_insert_attachment( $attachment, $upload_dir['path'] . '/' . $hashed_filename );
         return $attach_id;
     }
+
 
 
     public function addEndpointsToCache ($allowed_endpoints){

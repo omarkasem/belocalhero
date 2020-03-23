@@ -151,14 +151,22 @@ class OutdoorfPlace extends OutdoorfMain{
         update_post_meta($place_id,'address',$address);
 
         // Featured Image
-        $attach_id = $this->uploadImage($_POST['feat_image'],$_POST['feat_image_name']);
-        set_post_thumbnail($place_id,$attach_id);
+        if($_POST['feat_image'] != '' && $_POST['feat_image'] != ''){
+            $attach_id = $this->uploadImage($_POST['feat_image'],$_POST['feat_image_name']);
+            if($attach_id !== ''){
+                set_post_thumbnail($place_id,$attach_id);
+            }
+        }
+
 
         // Other images
         if(!empty($_POST['other_images'])){
             $all_ids = [];
             foreach($_POST['other_images'] as $image){
-                $all_ids[] = $this->uploadImage($image['image'],$image['image_name']);
+                $image = $this->uploadImage($image['image'],$image['image_name']);
+                if(intval($image) !== 0){
+                    $all_ids[] = $image;
+                }
             }
             if(!empty($all_ids)){
                 update_post_meta($place_id,'images',$all_ids);

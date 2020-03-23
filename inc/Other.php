@@ -288,7 +288,7 @@ class OutdoorfOther extends OutdoorfMain{
     }
 
     public function createIntroCallback(){
-        $id = $this->get_page_id_by_template('templates/page-about.php');
+        $id = $this->get_page_id_by_template('templates/page-intro.php');
 
         if(intval($id) ===0 || get_post($id) === null){
             return 'Page is not created';
