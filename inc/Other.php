@@ -8,7 +8,9 @@ class OutdoorfOther extends OutdoorfMain{
 
     public function registerHooks(){
         add_action('rest_api_init',array($this,'createHeaderMenu'));
-        add_action('rest_api_init',array($this,'createFooter'));
+        add_action('rest_api_init',array($this,'createRegister'));
+        add_action('rest_api_init',array($this,'createPolicy'));
+        
         add_action('rest_api_init',array($this,'createSlider'));
         add_action('rest_api_init',array($this,'createCookies'));
         add_action('rest_api_init',array($this,'createIntro'));
@@ -129,10 +131,19 @@ class OutdoorfOther extends OutdoorfMain{
             'fields'=>'ids',
         );
         $query = new WP_Query($args);
+        
         $final = [];
 
         if ( $query->have_posts() ) :
             while ( $query->have_posts() ) : $query->the_post();
+                if(has_post_thumbnail()){
+                    $image = get_the_post_thumbnail_url();
+                }else{
+                    $other_images = get_field('images');
+                    if(intval($other_images[0]) !== 0){
+                        $image = wp_get_attachment_url($other_images[0]);
+                    }
+                }
                 $address = get_field('address');
                 $type = get_field('type');
                 $final[] = array(
@@ -143,6 +154,8 @@ class OutdoorfOther extends OutdoorfMain{
                     'lat'=>$address['lat'],
                     'lng'=>$address['lng'],
                     'type'=>$type,
+                    'categories'=>get_field('category'),
+                    'image'=>$image,
                 );
             endwhile;
         endif;
@@ -358,21 +371,40 @@ class OutdoorfOther extends OutdoorfMain{
     }
 
 
-    // Footer
-    public function createFooter(){
-        $this->createEndpoint('footer','GET',array($this,'footerEndpoint'));
+
+    public function createRegister(){
+        $this->createEndpoint('register','GET',array($this,'registerCallback'));
     }
     
-    public function footerEndpoint(){
-        $footer_items = get_field('footer_items','option');
-        $social_media = get_field('social_media','option');
-        $copyright_message = get_field('copyright_message','option');
+    public function registerCallback(){
+        $id = $this->get_page_id_by_template('templates/page-register.php');
+
+        if(intval($id) ===0 || get_post($id) === null){
+            return 'Page is not created';
+        }
         return array(
-            'items'=>$footer_items,
-            'social'=>$social_media,
-            'message'=>$copyright_message,
+            'title'=>get_the_title($id),
+            'content'=>get_post_field('post_content', $id),
         );
     }
+
+    public function createPolicy(){
+        $this->createEndpoint('policy','GET',array($this,'policyCallback'));
+    }
+    
+    public function policyCallback(){
+        $id = $this->get_page_id_by_template('templates/page-policy.php');
+
+        if(intval($id) ===0 || get_post($id) === null){
+            return 'Page is not created';
+        }
+        return array(
+            'title'=>get_the_title($id),
+            'content'=>get_post_field('post_content', $id),
+        );
+    }
+
+
 
 }
 

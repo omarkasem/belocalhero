@@ -151,10 +151,10 @@ class OutdoorfPlace extends OutdoorfMain{
         update_post_meta($place_id,'address',$address);
 
         // Featured Image
-        if($_POST['feat_image'] != '' && $_POST['feat_image'] != ''){
-            $attach_id = $this->uploadImage($_POST['feat_image'],$_POST['feat_image_name']);
-            if($attach_id !== ''){
-                set_post_thumbnail($place_id,$attach_id);
+        if($_POST['feat_image'] != '' && $_POST['feat_image_name'] != '' && $_POST['feat_image'] != 'undefined' && $_POST['feat_image_name'] != 'undefined' ){
+            $feat_attach_id = intval($this->uploadImage($_POST['feat_image'],$_POST['feat_image_name']));
+            if($feat_attach_id !== 0){
+                set_post_thumbnail($place_id,$feat_attach_id);
             }
         }
 
@@ -169,6 +169,10 @@ class OutdoorfPlace extends OutdoorfMain{
                 }
             }
             if(!empty($all_ids)){
+                if($feat_attach_id === 0){
+                    $first = array_shift($all_ids);
+                    set_post_thumbnail($place_id,$first);
+                }
                 update_post_meta($place_id,'images',$all_ids);
             }
         }
@@ -203,9 +207,9 @@ class OutdoorfPlace extends OutdoorfMain{
         }
 
         // Image
-        if($_POST['feat_image'] == '' || $_POST['feat_image_name'] == ''){
-            return $this->returnError('add_place_rest','Featured image is required.');
-        }
+        // if($_POST['feat_image'] == '' || $_POST['feat_image_name'] == ''){
+        //     return $this->returnError('add_place_rest','Featured image is required.');
+        // }
 
 
         // Insert place
@@ -240,20 +244,31 @@ class OutdoorfPlace extends OutdoorfMain{
         update_post_meta($place_id,'address',$address);
 
         // Featured Image
-        $attach_id = $this->uploadImage($_POST['feat_image'],$_POST['feat_image_name']);
-        set_post_thumbnail($place_id,$attach_id);
+        if($_POST['feat_image'] != '' && $_POST['feat_image_name'] != '' && $_POST['feat_image'] != 'undefined' && $_POST['feat_image_name'] != 'undefined' ){
+            $feat_attach_id = intval($this->uploadImage($_POST['feat_image'],$_POST['feat_image_name']));
+            if($feat_attach_id !== 0){
+                set_post_thumbnail($place_id,$feat_attach_id);
+            }
+        }
+
 
         // Other images
         if(!empty($_POST['other_images'])){
             $all_ids = [];
             foreach($_POST['other_images'] as $image){
-                $all_ids[] = $this->uploadImage($image['image'],$image['image_name']);
+                $image = $this->uploadImage($image['image'],$image['image_name']);
+                if(intval($image) !== 0){
+                    $all_ids[] = $image;
+                }
             }
             if(!empty($all_ids)){
+                if(intval($feat_attach_id) === 0){
+                    $first = array_shift($all_ids);
+                    set_post_thumbnail($place_id,$first);
+                }
                 update_post_meta($place_id,'images',$all_ids);
             }
         }
-
 
 
         return true;
@@ -278,7 +293,7 @@ class OutdoorfPlace extends OutdoorfMain{
             'zipcode'=>'number',
             'email'=>'text',
             'website'=> 'text',
-            'phone_number'=> 'number',
+            'phone_number'=> 'text',
             'description'=> 'text',
             'hr_from'=> 'text',
             'hr_to'=> 'text',

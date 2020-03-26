@@ -167,6 +167,10 @@ abstract class OutdoorfMain{
 
     public function getUserAvatar($user_id){
         $image = get_field('profile_image','user_'.$user_id);
+        $social_image = get_field('social_profile_image','user_'.$user_id);
+        if($social_image != ''){
+            return $social_image;
+        }
         if($image == '' || is_wp_error($image)){
             return get_avatar_url($user_id);
         }

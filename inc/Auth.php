@@ -293,6 +293,8 @@ class OutdoorfAuth extends OutdoorfMain{
             return $user_id;
         }
         $attach_id = $this->uploadUserImage($data->photoUrl);
+        
+        update_user_meta($user_id,'social_profile_image',$data->photoUrl);
         update_user_meta($user_id,'profile_image',$attach_id);
         update_user_meta($user_id,$type.'_token',$data);
         $user = get_user_by('id',$user_id);

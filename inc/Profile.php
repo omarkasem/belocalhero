@@ -189,7 +189,7 @@ class OutdoorfProfile extends OutdoorfMain{
         }
         $user_id = intval(get_current_user_id());
         require_once(ABSPATH.'wp-admin/includes/user.php');
-        return wp_delete_user( $user_id, 1);
+        return wp_delete_user( $user_id, false);
     }
 
 
