@@ -1,4 +1,5 @@
 <?php
+
 // Save acf fields
 add_filter('acf/settings/save_json', 'ms_acf_json');
 function ms_acf_json( $path ) {
@@ -84,12 +85,27 @@ function acf_load_testimonials_field( $field ) {
 add_filter('acf/load_field/name=category', 'ms_acf_places_category');
 function ms_acf_places_category( $field ) {
     $field['choices'] = array();
-    if( have_rows('m_category', 'option') ) {
-        while( have_rows('m_category', 'option') ) {
+    $values = array(
+        __('Essen & Getränke','belocalhero'),
+        __('Wellness & Beauty','belocalhero'),
+        __('Lektionen','belocalhero'),
+        __('Andere','belocalhero'),
+        __('Haushalt','belocalhero'),
+        __('Fitness','belocalhero'),
+        __('Wissen','belocalhero'),
+        __('Blumen & Garten','belocalhero'),
+        __('Kunst & Design','belocalhero'),
+        __('Handwerker','belocalhero'),
+        __('Papeterie & Bücher','belocalhero'),
+        __('Games','belocalhero'),
+        __('Mobilität','belocalhero'),
+    );
+    if( !empty($values) ) {
+        foreach($values as $key => $val){
             the_row();
-            $value = get_sub_field('name');
-            $label = get_sub_field('name');
-            $field['choices'][ $value ] = $label;
+            $value = $val;
+            $label = $val;
+            $field['choices'][ $val ] = $label;
         }
     }
     return $field;
@@ -98,11 +114,17 @@ function ms_acf_places_category( $field ) {
 add_filter('acf/load_field/name=delivery', 'ms_acf_places_delivery');
 function ms_acf_places_delivery( $field ) {
     $field['choices'] = array();
-    if( have_rows('m_delivery', 'option') ) {
-        while( have_rows('m_delivery', 'option') ) {
+    $values = array(
+        __('Abholen','belocalhero'),
+        __('Briefkastenlieferung','belocalhero'),
+        __('Post','belocalhero'),
+        __('Online-Streaming','belocalhero'),
+    );
+    if( !empty($values) ) {
+        foreach($values as $val){
             the_row();
-            $value = get_sub_field('name');
-            $label = get_sub_field('name');
+            $value = $val;
+            $label = $val;
             $field['choices'][ $value ] = $label;
         }
     }
@@ -114,11 +136,17 @@ function ms_acf_places_delivery( $field ) {
 add_filter('acf/load_field/name=payment_methods', 'ms_acf_places_payment_methods');
 function ms_acf_places_payment_methods( $field ) {
     $field['choices'] = array();
-    if( have_rows('m_payment_methods', 'option') ) {
-        while( have_rows('m_payment_methods', 'option') ) {
+    $values = array(
+        __('Rechnung','belocalhero'),
+        __('Bargeld','belocalhero'),
+        __('Banküberweisung/Twint','belocalhero'),
+        __('Gratis','belocalhero'),
+    );
+    if( !empty($values) ) {
+        foreach($values as $val){
             the_row();
-            $value = get_sub_field('name');
-            $label = get_sub_field('name');
+            $value = $val;
+            $label = $val;
             $field['choices'][ $value ] = $label;
         }
     }
@@ -126,14 +154,19 @@ function ms_acf_places_payment_methods( $field ) {
 }
 
 
-add_filter('acf/load_field/name=type', 'ms_acf_places_type');
+add_filter('acf/load_field/key=field_5e8489733e50a', 'ms_acf_places_type');
 function ms_acf_places_type( $field ) {
     $field['choices'] = array();
-    if( have_rows('m_type', 'option') ) {
-        while( have_rows('m_type', 'option') ) {
+    $values = array(
+        __('Produkt','belocalhero'),
+        __('Service','belocalhero'),
+        __('Andere','belocalhero'),
+    );
+    if( !empty($values) ) {
+        foreach($values as $val){
             the_row();
-            $value = get_sub_field('name');
-            $label = get_sub_field('name');
+            $value = $val;
+            $label = $val;
             $field['choices'][ $value ] = $label;
         }
     }

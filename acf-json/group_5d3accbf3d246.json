@@ -116,7 +116,7 @@
             "key": "field_5d3acd3734746",
             "label": "Description",
             "name": "description",
-            "type": "textarea",
+            "type": "wysiwyg",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -126,10 +126,10 @@
                 "id": ""
             },
             "default_value": "",
-            "placeholder": "",
-            "maxlength": "",
-            "rows": "",
-            "new_lines": ""
+            "tabs": "all",
+            "toolbar": "full",
+            "media_upload": 1,
+            "delay": 0
         },
         {
             "key": "field_5d3acd4034747",
@@ -223,7 +223,7 @@
             "endpoint": 0
         },
         {
-            "key": "field_5e74b8ca28ff9",
+            "key": "field_5e8489733e50a",
             "label": "Type",
             "name": "type",
             "type": "select",
@@ -236,8 +236,9 @@
                 "id": ""
             },
             "choices": {
-                "Test": "Test",
-                "xcb": "xcb"
+                "Product": "Product",
+                "Service": "Service",
+                "Other": "Other"
             },
             "default_value": [],
             "allow_null": 0,
@@ -261,8 +262,19 @@
                 "id": ""
             },
             "choices": {
-                "Test": "Test",
-                "xcb": "xcb"
+                "Essen & Getränke-en": "Essen & Getränke-en",
+                "Wellness-en": "Wellness-en",
+                "Lektionen-en": "Lektionen-en",
+                "Other": "Other",
+                "Haushalt-en": "Haushalt-en",
+                "Fitness-en": "Fitness-en",
+                "Wissen-en": "Wissen-en",
+                "Blumen-en": "Blumen-en",
+                "Kunst-en": "Kunst-en",
+                "Handwreker-en": "Handwreker-en",
+                "Papeteire-en": "Papeteire-en",
+                "Games-en": "Games-en",
+                "Mobilität-en": "Mobilität-en"
             },
             "default_value": [],
             "allow_null": 0,
@@ -286,8 +298,10 @@
                 "id": ""
             },
             "choices": {
-                "sdgewt": "sdgewt",
-                "wqr": "wqr"
+                "Abholen-en": "Abholen-en",
+                "brief-en": "brief-en",
+                "Post en": "Post en",
+                "onlnie-en": "onlnie-en"
             },
             "default_value": [],
             "allow_null": 0,
@@ -311,8 +325,10 @@
                 "id": ""
             },
             "choices": {
-                "yrerye": "yrerye",
-                "cnxncx": "cnxncx"
+                "Rechnung": "Rechnung",
+                "Bargeld": "Bargeld",
+                "Banküberweisung\/Twint": "Banküberweisung\/Twint",
+                "Gratis-en": "Gratis-en"
             },
             "default_value": [],
             "allow_null": 0,
@@ -340,5 +356,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1584707849
+    "modified": 1586522052
 }

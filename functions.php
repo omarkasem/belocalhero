@@ -30,12 +30,6 @@ require_once(__DIR__.'/inc/Profile.php');
 // Place
 require_once(__DIR__.'/inc/Place.php');
 
-// Comments
-require_once(__DIR__.'/inc/Comments.php');
-
-// Blog
-require_once(__DIR__.'/inc/Blog.php');
-
 // Filter
 require_once(__DIR__.'/inc/Filter.php');
 

@@ -7,58 +7,45 @@ class OutdoorfOther extends OutdoorfMain{
     }
 
     public function registerHooks(){
-        add_action('rest_api_init',array($this,'createHeaderMenu'));
         add_action('rest_api_init',array($this,'createRegister'));
         add_action('rest_api_init',array($this,'createPolicy'));
-        
-        add_action('rest_api_init',array($this,'createSlider'));
-        add_action('rest_api_init',array($this,'createCookies'));
+        add_action('rest_api_init',array($this,'createLegal'));
         add_action('rest_api_init',array($this,'createIntro'));
+        add_action('rest_api_init',array($this,'createThankYou'));
         add_action('rest_api_init',array($this,'create404'));
         add_action('rest_api_init',array($this,'createAbout'));
         add_action('rest_api_init',array($this,'createResetPassword'));
         add_action('rest_api_init',array($this,'createResetPassword2'));
         add_action('rest_api_init',array($this,'createMapSearch'));
         add_action('rest_api_init',array($this,'createformSelections'));
-        
-        add_action('rest_api_init',array($this,'subscribeNewsletter'));
-
     }
 
+    public function createLegal(){
+        $this->createEndpoint('legal','GET',array($this,'legalCallback'));
+    }
+    
+    public function legalCallback(){
+        $id = $this->get_page_id_by_template('templates/page-legal.php');
 
-    public function subscribeNewsletter(){
-        $this->createEndpoint('subscribe_newsletter','POST',array($this,'subscribeNewsletterCallback'));
+        if(intval($id) ===0 || get_post($id) === null){
+            return 'Page is not created';
+        }
+        return array(
+            'title'=>get_the_title($id),
+            'content'=>get_post_field('post_content', $id),
+        );
     }
 
-    public function subscribeNewsletterCallback(){
-        if(!isset($_POST['email'])){
-            return $this->returnError('newsletter_rest','Email address is required.',411);
-        }
-        if(!is_email($_POST['email'])){
-            return $this->returnError('newsletter_rest','Email address is invalid.');
-        }
+    public function createThankYou(){
+        $this->createEndpoint('thank_you','GET',array($this,'thankYouCallback'));
+    }
 
-        $lang = 'de';
-        if(isset($_POST['lang'])){
-            $lang = $_POST['lang'];
-        }
-
-        $body = array(
-                'email_address'=>$_POST['email'],
-                'status'=>'pending',
-                'language'=>$lang,
+    public function thankYouCallback(){
+        return array(
+            'title'=>get_field('ty_title','option'),
+            'title2'=>get_field('ty_title2','option'),
+            'button'=>get_field('ty_button','option'),
         );
-        $args = array(
-            'method' => 'POST',
-            'headers'=>array(
-                'Authorization'=>'Bearer '.NEWSLETTER_API_KEY,
-                'Content-type' => 'application/json',
-            ),
-            'body'=>json_encode($body),
-        );
-        $response = wp_remote_post( NEWSLETTER_URL, $args );
-        $response = json_decode($response['body']);
-        return $response;
     }
 
 
@@ -66,42 +53,59 @@ class OutdoorfOther extends OutdoorfMain{
         $this->createEndpoint('form_selections','GET',array($this,'formSelectionsCallback'));
     }
 
+    public function getTranslation($value){
+        if(is_array($value)){
+            $new = [];
+            foreach($value as $val){
+                $new[] = translate(html_entity_decode($val),'belocalhero');
+            }
+            return $new;
+        }else{
+            return translate(html_entity_decode($value),'belocalhero');
+        }
+    }
+
+
     public function formSelectionsCallback(){
         $all = [];
         
-        
-        $kind = get_field('m_type','option');;
-        foreach($kind as $val){
+        $kind = get_field_object('field_5e8489733e50a');
+        $key=-1;
+        foreach($kind['choices'] as $val){ $key++;
             $all['type'][] = array(
-                'name'=>$val['name'],
+                'key'=>$key,
+                'name'=>$this->getTranslation($val),
                 'checked'=>false,
             );
         }
 
 
-        
-        $size = get_field('m_category','option');;
-        foreach($size as $val){
+        $key=-1;
+        $size = get_field_object('field_5d3acd4b34748');
+        foreach($size['choices'] as $val){ $key++;
             $all['category'][] = array(
-                'name'=>$val['name'],
+                'key'=>$key,
+                'name'=>$this->getTranslation($val),
                 'checked'=>false,
             );
         }
 
-        
-        $size = get_field('m_delivery','option');;
-        foreach($size as $val){
+        $key=-1;
+        $size = get_field_object('field_5e74b55535b82');
+        foreach($size['choices'] as $val){ $key++;
             $all['delivery'][] = array(
-                'name'=>$val['name'],
+                'key'=>$key,
+                'name'=>$this->getTranslation($val),
                 'checked'=>false,
             );
         }
 
-        
-        $size = get_field('m_payment_methods','option');;
-        foreach($size as $val){
+        $key=-1;
+        $size = get_field_object('field_5e74b58435b83');
+        foreach($size['choices'] as $val){ $key++;
             $all['payment_methods'][] = array(
-                'name'=>$val['name'],
+                'key'=>$key,
+                'name'=>$this->getTranslation($val),
                 'checked'=>false,
             );
         }
@@ -146,6 +150,12 @@ class OutdoorfOther extends OutdoorfMain{
                 }
                 $address = get_field('address');
                 $type = get_field('type');
+                if($this->searchIfExists($final,$address['lat'],$address['lng'])){
+                    $offset = rand(0,1000)/10000000;
+                    $offset2 = rand(0, 1000)/10000000;
+                    $address['lat'] += $offset;
+                    $address['lng'] += $offset2; 
+                }
                 $final[] = array(
                     'id'=>get_the_ID(),
                     'slug'=>get_post_field('post_name'),
@@ -160,6 +170,14 @@ class OutdoorfOther extends OutdoorfMain{
             endwhile;
         endif;
         return $final;
+    }
+
+    public function searchIfExists($final,$lat,$lng){
+        foreach($final as $fin){
+            if($fin['lat'] === $lat && $fin['lng'] === $lng){
+                return true;
+            }
+        }
     }
 
     public function createResetPassword2(){
@@ -262,16 +280,19 @@ class OutdoorfOther extends OutdoorfMain{
 
     public function AboutCallback(){
         $id = $this->get_page_id_by_template('templates/page-about.php');
-
         if(intval($id) ===0 || get_post($id) === null){
             return 'Page is not created';
         }
         return array(
             'title'=>get_the_title($id),
-            'left_text'=>get_field('left_text',$id),
-            'left_logos'=>get_field('left_logos',$id),
-            'right_text'=>get_field('right_text',$id),
-            'right_logos'=>get_field('right_logos',$id),
+            'main_text'=>get_field('main_text',$id),
+            'about_logos'=>get_field('left_logos',$id),
+            'logos_text'=>get_field('right_text',$id),
+            'partner_title'=>get_field('partner_title',$id),
+            'partner_logos'=>get_field('right_logos',$id),
+            'friends_title'=>get_field('friends_title',$id),
+            'friends_logos'=>get_field('friends_logos',$id),
+            'links'=>get_field('ab_links',$id),
         );
     }
 
@@ -318,57 +339,6 @@ class OutdoorfOther extends OutdoorfMain{
     }
 
 
-    public function createCookies(){
-        $this->createEndpoint('cookies','GET',array($this,'CookiesCallback'));
-    }
-
-    public function CookiesCallback(){
-        return get_field('cookies_message','option');
-    }
-
-    public function createSlider(){
-        $this->createEndpoint('slider','GET',array($this,'sliderCllback'));
-    }
-
-
-    public function sliderCllback(){
-        $slider = get_field('slider_items','option');
-        if(empty($slider)){return;}
-        return $slider;
-    }
-
-    public function createHeaderMenu(){
-        $this->createEndpoint('menus/header','GET',array($this,'headerMenu'));
-    }
-
-    public function headerMenu(){
-        return $this->get_menu_items('header_menu');
-    }
-
-    private function get_menu_items($menu_slug) {
-      $menu_items = array();
-
-      if ( ($locations = get_nav_menu_locations()) && isset($locations[$menu_slug]) && $locations[$menu_slug] != 0 ) {
-        $menu = get_term( $locations[ $menu_slug ] );
-        $menu_items = wp_get_nav_menu_items($menu->term_id);
-      }
-
-      $final_items = array();
-      if(!empty($menu_items)){
-        foreach($menu_items as $item){
-            $final_items[] = array(
-                'title'=>$item->title,
-                'url'=>$item->url,
-                'slug'=>basename( $item->url ),
-                'target'=>$item->target,
-                'attr_title'=>$item->attr_title,
-                'classes'=>$item->classes,
-            );
-        }
-      }
-
-      return $final_items;
-    }
 
 
 

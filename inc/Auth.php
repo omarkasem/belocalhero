@@ -18,7 +18,6 @@ class OutdoorfAuth extends OutdoorfMain{
     }
 
 
-
     /**
      * @return function callback
      */
@@ -195,7 +194,7 @@ class OutdoorfAuth extends OutdoorfMain{
         return $user;
     }
 
-    function validateLogin($post){
+    public function validateLogin($post){
         if(empty($post)){
             $this->addError('empty_fields','Request is empty.');
         }

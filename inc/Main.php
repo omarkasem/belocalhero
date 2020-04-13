@@ -2,7 +2,7 @@
 use \Firebase\JWT\JWT; 
 abstract class OutdoorfMain{
 
-    private $textDomain = 'Outdoor-Family';
+    private $textDomain = 'belocalhero';
     private $errors;
 
     public function __construct(){
@@ -212,8 +212,18 @@ abstract class OutdoorfMain{
         return $id;
     }
 
+    function getAttachIDByURL($image_url) {
+        global $wpdb;
+        $attachment = $wpdb->get_col($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid='%s';", $image_url )); 
+            return $attachment[0]; 
+    }
+    
+
 
     public function uploadImage($base64_img,$image_name){
+        if (filter_var($base64_img, FILTER_VALIDATE_URL) !== false) {
+            return $this->getAttachIDByURL($base64_img);
+        }
         $mime_ext = end(explode('/', (explode(';', $base64_img))[0]));
         $mime_type = 'image/'.$mime_ext;
 
